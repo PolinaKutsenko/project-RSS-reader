@@ -3,7 +3,7 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
-const isProduction = process.env.NODE_ENV || 'development';
+const isProduction = process.env.NODE_ENV || 'production';
 
 const config = {
   entry: './src/index.js',
@@ -22,6 +22,9 @@ const config = {
     // Add your plugins here
     // Learn more about plugins from https://webpack.js.org/configuration/plugins/
   ],
+  performance: {
+    hints: false,
+  },
   module: {
     rules: [
       // {

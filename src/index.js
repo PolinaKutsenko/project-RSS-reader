@@ -1,10 +1,4 @@
 import './style.scss';
-import * as bootstrap from 'bootstrap';
+import buildForm from './buildForm.js';
 
-const app = () => {
-  const container = document.querySelector('.container');
-  const form = document.createElement('form');
-  form.innerHTML = '<input type="text" name="text"><input type="submit" value="Submit" disabled="">';
-  container.append(form);
-};
-app();
+buildForm();
