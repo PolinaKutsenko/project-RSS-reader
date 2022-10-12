@@ -1,20 +1,31 @@
 import axios from 'axios';
+import _ from 'lodash';
+import parserRSS from '../parserRSS.js';
 
 const handlerOfLoadingRSS = (state, url) => {
   const rssUrl = new URL(`https://allorigins.hexlet.app/get?disableCache=true&url=${url}`);
-  console.log('rssurk', rssUrl);
   axios.get(rssUrl)
     .then((response) => {
       console.log('axios');
       console.log(response);
       console.log(typeof response.data.contents);
       console.log('axios');
-      const posts = document.querySelector('div.posts');
-      posts.innerHTML = response.data.contents;
+      const parserResponse = parserRSS(response.data.contents);
+      console.log(parserResponse);
+      const newFeed = parserResponse.feed;
+      newFeed.id = _.uniqueId();
+      console.log(newFeed.id);
+      state.feeds.push(newFeed);
+      const newPosts = parserResponse.posts.forEach((post) => {
+        post.id = _.uniqueId();
+        post.feedId = newFeed.id;
+      });
+      state.posts = [...state.posts, ...newPosts];
+      state.activeFeedId = newFeed.id;
+      console.log(state);
     })
     .catch((e) => {
-      const posts = document.querySelector('div.posts');
-      posts.innerHTML = e;
+      throw new Error('Network error');
     });
 };
 

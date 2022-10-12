@@ -1,6 +1,6 @@
 import i18next from 'i18next';
 import './style.scss';
-import app from './buildForm.js';
+import app from './app.js';
 
 const runApp = () => {
   const promise = new Promise((resolve) => {
@@ -30,6 +30,9 @@ const runApp = () => {
       validateForm: null,
       validateError: null,
       feeds: [],
+      posts: [],
+      RSSurl: [],
+      activeFeedId: null,
     };
     return state;
   })

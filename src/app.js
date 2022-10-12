@@ -1,32 +1,17 @@
 import onChange from 'on-change';
 import validateForm from './validateSchema.js';
 import handlerOfLoadingRSS from './handlers/handlerOfLoadingRSS';
-
-const buildForm = (watchedState) => {
-  const input = document.querySelector('#url-input');
-  const form = document.querySelector('form');
-  const feedback = document.querySelector('p.feedback');
-
-  if (watchedState.validateForm === 'invalid') {
-    input.classList.add('is-invalid');
-    feedback.classList.remove('text-success');
-    feedback.classList.add('text-danger');
-    feedback.textContent = watchedState.validateError;
-  }
-  if (watchedState.validateForm === 'valid') {
-    input.classList.remove('is-invalid');
-    feedback.classList.remove('text-danger');
-    feedback.classList.add('text-success');
-    feedback.textContent = watchedState.i18n.t('validation.succesfull');
-    form.reset();
-    form.elements.url.focus();
-  }
-};
+import formRender from './renders/formRender.js';
+import responseRender from './renders/responseRender';
 
 const watchedState = (state) => {
-  const watcher = onChange(state, () => {
+  const watcher = onChange(state, (path) => {
     console.log('ya srabotal');
-    buildForm(watcher);
+    if (path === 'validateForm' || path === 'validateError') {
+      formRender(watcher);
+    } else {
+      responseRender(watcher);
+    }
   });
   return watcher;
 };
@@ -40,7 +25,7 @@ const inputHandler = (state) => {
     validateForm(value, state)
       .then((url) => {
         state.validateForm = 'valid';
-        state.feeds.push(url);
+        state.RSSurl.push(url);
         state.validateError = null;
         return url;
       })
