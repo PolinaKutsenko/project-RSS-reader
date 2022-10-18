@@ -6,17 +6,26 @@ const runApp = () => {
   const promise = new Promise((resolve) => {
     const i18nextInstance = i18next.createInstance();
     i18nextInstance.init({
-      lng: 'en',
+      lng: 'ru',
       debug: true,
       resources: {
-        en: {
+        ru: {
           translation: {
             validation: {
               errors: {
                 notURL: 'Ссылка должна быть валидным URL',
                 existFeed: 'RSS уже существует',
               },
-              succesfull: 'RSS успешно загружен',
+              isValid: 'RSS загружается',
+            },
+            loading: {
+              networkErrror: 'Ошибка сети',
+              isLoaded: 'RSS успешно загружен',
+            },
+            content: {
+              feed: 'Фиды',
+              post: 'Посты',
+              view: 'Просмотр',
             },
           },
         },
@@ -27,12 +36,21 @@ const runApp = () => {
   promise.then((i18nextInstance) => {
     const state = {
       i18n: i18nextInstance,
-      validateForm: null,
-      validateError: null,
-      feeds: [],
-      posts: [],
-      RSSurl: [],
-      activeFeedId: null,
+      feedbackMessage: null,
+      validation: {
+        validateForm: null,
+        RSSurl: [],
+      },
+      loadingRSS: {
+        errors: [],
+        feeds: [],
+        posts: [],
+        uiState: {
+          viewedPostsId: [],
+          currentModal: null,
+          activeFeedId: null,
+        },
+      },
     };
     return state;
   })

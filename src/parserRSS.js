@@ -6,6 +6,7 @@ const parserRSS = (response) => {
     const description = doc.querySelector('channel description').textContent;
     const link = doc.querySelector('channel link').textContent;
     const items = doc.querySelectorAll('item');
+
     const posts = Array.from(items).map((item) => {
       const postTitle = item.querySelector('title').textContent;
       const postDescription = item.querySelector('description').textContent;

@@ -7,7 +7,7 @@ const validateForm = (value, state) => {
       url: state.i18n.t('validation.errors.notURL'),
     },
   });
-  const schema = yup.string().url().notOneOf(state.RSSurl);
+  const schema = yup.string().url().notOneOf(state.validation.RSSurl);
   return schema.validate(value);
 };
 export default validateForm;
