@@ -19,7 +19,10 @@ const runApp = () => {
               isValid: 'RSS загружается',
             },
             loading: {
-              networkErrror: 'Ошибка сети',
+              errors: {
+                networkErrror: 'Ошибка сети',
+                resourseError: 'Ресурс не содержит валидный RSS',
+              },
               isLoaded: 'RSS успешно загружен',
             },
             content: {
