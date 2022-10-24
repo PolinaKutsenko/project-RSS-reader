@@ -14,23 +14,28 @@ const submitFormHandler = (state) => {
         throw new Error(error);
       })
       .then((url) => {
-        const isExistedURL = state.validation.RSSurl.includes(url);
-        if (isExistedURL) {
+        const resources = state.loadingRSS.resources.map((resourсe) => resourсe.url);
+        if (resources.includes(url)) {
+          state.process = 'validation';
           throw new Error(state.i18n.t('validation.errors.existFeed'));
         }
         return url;
       })
       .then((url) => {
-        state.validation.RSSurl.push(url);
-        state.validation.validateForm = 'valid';
-        state.feedbackMessage = state.i18n.t('validation.isValid');
+        state.validation = 'valid';
+        state.process = 'validation';
         return url;
+      })
+      .catch((error) => {
+        console.log(state);
+        state.validation = 'invalid';
+        console.log(state);
+        throw new Error(error.message);
       })
       .then((url) => {
         handlerOfLoadingRSS(state, url);
       })
       .catch((error) => {
-        state.validation.validateForm = 'invalid';
         state.feedbackMessage = error.message;
       });
   });

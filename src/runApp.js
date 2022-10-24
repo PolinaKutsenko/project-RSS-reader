@@ -15,8 +15,8 @@ const runApp = () => {
               errors: {
                 notURL: 'Ссылка должна быть валидным URL',
                 existFeed: 'RSS уже существует',
+                minLength: 'Не должно быть пустым',
               },
-              isValid: 'RSS загружается',
             },
             loading: {
               errors: {
@@ -39,19 +39,18 @@ const runApp = () => {
   promise.then((i18nextInstance) => {
     const state = {
       i18n: i18nextInstance,
+      process: null,
       feedbackMessage: null,
-      validation: {
-        validateForm: null,
-        RSSurl: [],
-      },
+      validation: null,
       loadingRSS: {
+        currentFeedId: null,
         errors: [],
         feeds: [],
         posts: [],
+        resources: [],
         uiState: {
           viewedPostsId: [],
           currentModal: null,
-          activeFeedId: null,
         },
       },
     };

@@ -12,15 +12,10 @@ const parseRSS = (response) => {
       const postDescription = item.querySelector('description').textContent;
       const postLink = item.querySelector('link').textContent;
       const postPubDate = item.querySelector('pubDate').textContent;
-      console.log('item:', {
-        postTitle, postDescription, postLink, postPubDate,
-      });
       return {
         postTitle, postDescription, postLink, postPubDate,
       };
     });
-    console.log('in parser posts', arrayOfPosts);
-    console.log('in parser', { feed: { title, description, link }, posts: arrayOfPosts });
     return { feed: { title, description, link }, posts: arrayOfPosts };
   } catch (e) {
     throw new Error('Parsing RSS Error');
