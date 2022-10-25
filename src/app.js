@@ -1,11 +1,12 @@
 import onChange from 'on-change';
 import { formRender, feedbackMessageRender } from './renders/formRender.js';
-import renderResponse from './renders/responseRender';
+import renderResponse from './renders/responseRender.js';
 import submitFormHandler from './handlers/submitFormHandler.js';
-import openPostLinkHandler from './handlers/modalHandler.js';
+import { openPostLinkHandler, viewModalOpenHandler, viewModalCloseHandler } from './handlers/modalHandler.js';
+import { buildModal, deleteModal } from './renders/modalRender.js';
 
 const watchedState = (state) => {
-  const watcher = onChange(state, (path) => {
+  const watcher = onChange(state, (path, value) => {
     if (path === 'validation') {
       formRender(watcher);
     }
@@ -14,9 +15,22 @@ const watchedState = (state) => {
     }
     if (path === 'loadingRSS.feeds') {
       renderResponse(watcher);
+      openPostLinkHandler(watcher);
+      viewModalOpenHandler(watcher);
+      viewModalCloseHandler(watcher);
     }
     if (path === 'loadingRSS.posts' || path === 'loadingRSS.uiState.viewedPostsId') {
       renderResponse(watcher);
+      openPostLinkHandler(watcher);
+      viewModalOpenHandler(watcher);
+      viewModalCloseHandler(watcher);
+    }
+    if (path === 'loadingRSS.uiState.currentModal') {
+      if (value === null) {
+        deleteModal();
+      } else {
+        buildModal(watcher);
+      }
     }
   });
   return watcher;
@@ -25,5 +39,4 @@ const watchedState = (state) => {
 export default (state) => {
   const watcher = watchedState(state);
   submitFormHandler(watcher);
-  openPostLinkHandler(watcher);
 };

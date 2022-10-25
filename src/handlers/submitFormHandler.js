@@ -13,24 +13,19 @@ const submitFormHandler = (state) => {
         const [error] = errors;
         throw new Error(error);
       })
-      .then((url) => {
+      .catch((error) => {
+        state.validation = 'invalid';
         const resources = state.loadingRSS.resources.map((resourсe) => resourсe.url);
-        if (resources.includes(url)) {
+        if (resources.includes(value)) {
           state.process = 'validation';
           throw new Error(state.i18n.t('validation.errors.existFeed'));
         }
-        return url;
+        throw new Error(error.message);
       })
       .then((url) => {
         state.validation = 'valid';
         state.process = 'validation';
         return url;
-      })
-      .catch((error) => {
-        console.log(state);
-        state.validation = 'invalid';
-        console.log(state);
-        throw new Error(error.message);
       })
       .then((url) => {
         handlerOfLoadingRSS(state, url);

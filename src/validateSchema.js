@@ -9,7 +9,7 @@ const validateForm = (value, state) => {
     },
   });
   const resources = state.loadingRSS.resources.map((resourse) => resourse.url);
-  const schema = yup.string().url().min(16).notOneOf(resources);
+  const schema = yup.string().url().min(5).notOneOf(resources);
   return schema.validate(value);
 };
 export default validateForm;

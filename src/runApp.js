@@ -1,3 +1,4 @@
+import 'bootstrap';
 import i18next from 'i18next';
 import './style.scss';
 import app from './app.js';
@@ -43,7 +44,6 @@ const runApp = () => {
       feedbackMessage: null,
       validation: null,
       loadingRSS: {
-        currentFeedId: null,
         errors: [],
         feeds: [],
         posts: [],
