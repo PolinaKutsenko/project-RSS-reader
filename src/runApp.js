@@ -52,6 +52,10 @@ const runApp = () => {
           viewedPostsId: [],
           currentModal: null,
         },
+        updatingPosts: {
+          currentTimerID: null,
+          errorUpdating: false,
+        },
       },
     };
     return state;

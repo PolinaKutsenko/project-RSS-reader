@@ -1,6 +1,5 @@
 const buildModal = (state) => {
   const currentModalPostId = state.loadingRSS.uiState.currentModal;
-  console.log(currentModalPostId);
   const [post] = state.loadingRSS.posts.filter((postIter) => postIter.id === currentModalPostId);
   const modalTitle = document.querySelector('.modal-title');
   modalTitle.textContent = post.postTitle;
@@ -27,6 +26,8 @@ const buildModal = (state) => {
 };
 
 const deleteModal = () => {
+  console.log('deletemodal srabotal');
+
   const divShow = document.querySelector('#modal');
   divShow.classList.remove('show');
   divShow.removeAttribute('aria-modal');
@@ -34,7 +35,7 @@ const deleteModal = () => {
   divShow.setAttribute('aria-hidden', 'true');
   divShow.setAttribute('style', 'display: none;');
 
-  document.body.clasList.remove('modal-open');
+  document.body.classList.remove('modal-open');
   document.body.setAttribute('style', '');
 
   const backGroundShow = document.querySelector('div.modal-backdrop');

@@ -17,10 +17,10 @@ const viewModalOpenHandler = (state) => {
 };
 
 const viewModalCloseHandler = (state) => {
-  const closeButton = document.querySelector('[data-bs-dismiss="modal"]');
-  closeButton.addEventListener('click', () => {
+  const closeButtons = document.querySelectorAll('[data-bs-dismiss="modal"]');
+  closeButtons.forEach((button) => button.addEventListener('click', () => {
     state.loadingRSS.uiState.currentModal = null;
-  });
+  }));
 };
 
 export { openPostLinkHandler, viewModalOpenHandler, viewModalCloseHandler };

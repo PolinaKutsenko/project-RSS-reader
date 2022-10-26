@@ -37,7 +37,6 @@ const updatingRSS = (state) => {
         const existedPostsTitle = existedPosts.map((post) => post.postTitle);
         const newPosts = posts.filter((post) => !existedPostsTitle.includes(post.postTitle));
         if (!_.isEmpty(newPosts)) {
-          /// /
           const newPostsWithId = newPosts.map((post) => {
             const postId = _.uniqueId();
             return { ...post, id: postId, feedId: currentfeedId };
@@ -45,10 +44,26 @@ const updatingRSS = (state) => {
           state.loadingRSS.posts = [...state.loadingRSS.posts, ...newPostsWithId];
           state.process = 'loaded';
           state.feedbackMessage = state.i18n.t('loading.isLoaded');
-          /// /
         }
       });
+    })
+    .then(() => {
+      state.updatingPosts.errorUpdating = false;
+    })
+    .catch((e) => {
+      state.updatingPosts.errorUpdating = e.message;
     });
 };
 
-export default updatingRSS;
+const timer = (state) => {
+  if (!state.updatingPosts.errorUpdating) {
+    const timerId = setTimeout(() => {
+      updatingRSS(state);
+      state.updatingPosts.currentTimerID = timerId;
+    }, 5000);
+  } else {
+    clearTimeout(state.updatingPosts.currentTimerID);
+  }
+};
+
+export { updatingRSS, timer };
