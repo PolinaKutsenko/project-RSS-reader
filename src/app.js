@@ -2,11 +2,12 @@ import onChange from 'on-change';
 import { formRender, feedbackMessageRender } from './renders/formRender.js';
 import renderResponse from './renders/responseRender.js';
 import submitFormHandler from './handlers/submitFormHandler.js';
-import { openPostLinkHandler, viewModalOpenHandler, viewModalCloseHandler } from './handlers/modalHandler.js';
-import { buildModal, deleteModal } from './renders/modalRender.js';
+import { openPostLinkHandler, viewModalOpenHandler } from './handlers/modalHandler.js';
+import buildModal from './renders/modalRender.js';
+import timer from './handlers/updateHandler.js';
 
 const watchedState = (state) => {
-  const watcher = onChange(state, (path, value) => {
+  const watcher = onChange(state, (path) => {
     if (path === 'validation') {
       formRender(watcher);
     }
@@ -17,20 +18,18 @@ const watchedState = (state) => {
       renderResponse(watcher);
       openPostLinkHandler(watcher);
       viewModalOpenHandler(watcher);
-      viewModalCloseHandler(watcher);
     }
     if (path === 'loadingRSS.posts' || path === 'loadingRSS.uiState.viewedPostsId') {
       renderResponse(watcher);
       openPostLinkHandler(watcher);
       viewModalOpenHandler(watcher);
-      viewModalCloseHandler(watcher);
     }
     if (path === 'loadingRSS.uiState.currentModal') {
-      if (value === null) {
-        deleteModal();
-      } else {
-        buildModal(watcher);
-      }
+      buildModal(watcher);
+    }
+    if (path === 'loadingRSS.updatingPosts.currentTimerID') {
+      console.log('watcher at timer');
+      timer(watcher);
     }
   });
   return watcher;

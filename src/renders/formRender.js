@@ -1,5 +1,3 @@
-import _ from 'lodash';
-
 const formRender = (watchedState) => {
   const input = document.querySelector('#url-input');
   const form = document.querySelector('form');

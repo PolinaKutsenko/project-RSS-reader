@@ -54,7 +54,7 @@ const runApp = () => {
         },
         updatingPosts: {
           currentTimerID: null,
-          errorUpdating: false,
+          errorUpdating: null,
         },
       },
     };

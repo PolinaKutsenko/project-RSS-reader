@@ -64,7 +64,6 @@ const buildCard = (state, typeOfCard) => {
 };
 
 const renderResponse = (state) => {
-  console.log('renderfeeds', state);
   const feedsContainer = document.querySelector('.feeds');
   feedsContainer.innerHTML = '';
   const divFeedEl = buildCard(state, 'feed');

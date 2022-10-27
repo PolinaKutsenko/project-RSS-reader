@@ -1,6 +1,7 @@
 import axios from 'axios';
 import _ from 'lodash';
 import parseRSS from '../parserRSS.js';
+import timer from './updateHandler.js';
 
 const handlerOfLoadingRSS = (state, url) => {
   const rssUrl = new URL(`https://allorigins.hexlet.app/get?disableCache=true&url=${url}`);
@@ -32,6 +33,10 @@ const handlerOfLoadingRSS = (state, url) => {
       state.loadingRSS.resources.push({ feedId, url });
       state.process = 'loaded';
       state.feedbackMessage = state.i18n.t('loading.isLoaded');
+    })
+    .then(() => {
+      timer(state);
+      console.log('first timer go');
     })
     .catch((error) => {
       state.feedbackMessage = error.message;
