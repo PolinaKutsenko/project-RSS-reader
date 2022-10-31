@@ -64,6 +64,7 @@ const buildCard = (state, typeOfCard) => {
 };
 
 const renderResponse = (state) => {
+  console.log('responseRender!!', state);
   const feedsContainer = document.querySelector('.feeds');
   feedsContainer.innerHTML = '';
   const divFeedEl = buildCard(state, 'feed');
@@ -84,15 +85,22 @@ const renderResponse = (state) => {
 
   const ulPostEl = document.createElement('ul');
   ulPostEl.classList.add('list-group', 'border-0', 'rounded-0');
-  state.loadingRSS.feeds.forEach((feed) => {
-    const { id } = feed;
-    const postsOfCurrentFeed = state.loadingRSS.posts.filter((post) => post.feedId === id);
-    postsOfCurrentFeed.forEach((post) => {
-      const liEl = buildPostItem(post, state);
-      ulPostEl.append(liEl);
-      return ulPostEl;
-    });
+
+  state.loadingRSS.posts.forEach((post) => {
+    const liEl = buildPostItem(post, state);
+    ulPostEl.append(liEl);
+    return ulPostEl;
   });
+
+  // state.loadingRSS.feeds.forEach((feed) => {
+  // const { id } = feed;
+  // const postsOfCurrentFeed = state.loadingRSS.posts.filter((post) => post.feedId === id);
+  // postsOfCurrentFeed.forEach((post) => {
+  // const liEl = buildPostItem(post, state);
+  // ulPostEl.append(liEl);
+  // return ulPostEl;
+  //  });
+  // });
   divPostEl.append(ulPostEl);
   postsContainer.append(divPostEl);
 };

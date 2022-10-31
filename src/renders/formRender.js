@@ -17,7 +17,7 @@ const feedbackMessageRender = (state) => {
   feedback.textContent = state.feedbackMessage;
   feedback.classList.remove('text-success');
   feedback.classList.remove('text-danger');
-  if (state.process === 'loaded') {
+  if (state.process === 'loaded' && state.validation === 'valid') {
     feedback.classList.add('text-success');
     return;
   }

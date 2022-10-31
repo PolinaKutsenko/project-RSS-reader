@@ -3,7 +3,6 @@ import _ from 'lodash';
 import parseRSS from '../parserRSS.js';
 
 const updatingRSS = (state) => {
-  console.log('going updatingRSS');
   const { posts: oldPosts, feeds: oldFeeds } = state.loadingRSS;
   const promises = state.loadingRSS.resources.map((resource) => {
     const rssUrl = new URL(`https://allorigins.hexlet.app/get?disableCache=true&url=${resource.url}`);
@@ -24,7 +23,7 @@ const updatingRSS = (state) => {
       });
   });
 
-  Promise.all(promises)
+  const promise = Promise.all(promises)
     .catch((error) => {
       console.log('Error in promise.all', error.message);
       throw new Error(error.message);
@@ -42,29 +41,32 @@ const updatingRSS = (state) => {
             const postId = _.uniqueId();
             return { ...post, id: postId, feedId: currentfeedId };
           });
-          state.loadingRSS.posts = [...state.loadingRSS.posts, ...newPostsWithId];
+          state.loadingRSS.posts = [...newPostsWithId, ...state.loadingRSS.posts];
         }
         state.process = 'loaded';
-        console.log('finished updating');
       });
     })
     .then(() => {
       state.loadingRSS.updatingPosts.errorUpdating = false;
-      console.log('change errorUpdating', state);
     })
     .catch((e) => {
       state.loadingRSS.updatingPosts.errorUpdating = e.message;
     });
+  return promise;
 };
 
 const timer = (state) => {
-  console.log('timer', state);
-  const timerId = setTimeout(() => {
-    updatingRSS(state);
-    state.loadingRSS.updatingPosts.currentTimerID = timerId;
-  }, 5000);
+  if (!state.loadingRSS.updatingPosts.errorUpdating) {
+    const timerId = setTimeout(() => {
+      updatingRSS(state)
+        .then(() => {
+          state.loadingRSS.updatingPosts.currentTimerID = timerId;
+        });
+    }, 5000);
+  }
   if (state.loadingRSS.updatingPosts.errorUpdating) {
-    clearTimeout(state.loadingRSSupdatingPosts.currentTimerID);
+    console.log('cleartimeout!!!');
+    clearTimeout(state.loadingRSS.updatingPosts.currentTimerID);
   }
 };
 

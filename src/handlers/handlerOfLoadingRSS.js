@@ -24,19 +24,20 @@ const handlerOfLoadingRSS = (state, url) => {
     .then((parsedResponse) => {
       const { feed, posts } = parsedResponse;
       const feedId = _.uniqueId();
-      state.loadingRSS.feeds.push({ ...feed, id: feedId });
+      state.loadingRSS.feeds = [{ ...feed, id: feedId }, ...state.loadingRSS.feeds];
       const newPosts = posts.map((post) => {
         const postId = _.uniqueId();
         return { ...post, id: postId, feedId };
       });
-      state.loadingRSS.posts = [...state.loadingRSS.posts, ...newPosts];
+      state.loadingRSS.posts = [...newPosts, ...state.loadingRSS.posts];
       state.loadingRSS.resources.push({ feedId, url });
       state.process = 'loaded';
       state.feedbackMessage = state.i18n.t('loading.isLoaded');
+      state.loadingRSS.updatingPosts.errorUpdating = null;
     })
     .then(() => {
       timer(state);
-      console.log('first timer go');
+      console.log('first timer go', state);
     })
     .catch((error) => {
       state.feedbackMessage = error.message;
