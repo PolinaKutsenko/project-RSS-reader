@@ -2,13 +2,13 @@ import axios from 'axios';
 import _ from 'lodash';
 import parseRSS from '../parserRSS.js';
 
-const updatingRSS = (state) => {
+const updatingRSS = (state, i18n) => {
   const { posts: oldPosts, feeds: oldFeeds } = state.loadingRSS;
   const promises = state.loadingRSS.resources.map((resource) => {
     const rssUrl = new URL(`https://allorigins.hexlet.app/get?disableCache=true&url=${resource.url}`);
     return axios.get(rssUrl.toString())
       .catch(() => {
-        throw new Error(state.i18n.t('loading.errors.networkErrror'));
+        throw new Error(i18n.t('loading.errors.networkErrror'));
       })
       .then((response) => {
         const parsedResponse = parseRSS(response.data.contents);
@@ -17,7 +17,7 @@ const updatingRSS = (state) => {
       })
       .catch((e) => {
         if (e.message === 'Parsing RSS Error') {
-          throw new Error(state.i18n.t('loading.errors.resourseError'));
+          throw new Error(i18n.t('loading.errors.resourseError'));
         }
         throw new Error(e.message);
       });
@@ -55,10 +55,10 @@ const updatingRSS = (state) => {
   return promise;
 };
 
-const timer = (state) => {
+const timer = (state, i18n) => {
   if (!state.loadingRSS.updatingPosts.errorUpdating) {
     const timerId = setTimeout(() => {
-      updatingRSS(state)
+      updatingRSS(state, i18n)
         .then(() => {
           state.loadingRSS.updatingPosts.currentTimerID = timerId;
         });

@@ -12,9 +12,11 @@ const formRender = (watchedState) => {
   }
 };
 
-const feedbackMessageRender = (state) => {
+const feedbackMessageRender = (state, i18n) => {
   const feedback = document.querySelector('p.feedback');
-  feedback.textContent = state.feedbackMessage;
+  console.log(state.feedbackMessageKey);
+  console.log(i18n.t(`${state.feedbackMessageKey}`));
+  feedback.textContent = i18n.t(`${state.feedbackMessageKey}`);
   feedback.classList.remove('text-success');
   feedback.classList.remove('text-danger');
   if (state.process === 'loaded' && state.validation === 'valid') {

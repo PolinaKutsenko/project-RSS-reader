@@ -7,18 +7,19 @@ const submitFormHandler = (state) => {
     e.preventDefault();
     const formData = new FormData(e.target);
     const value = formData.get('url');
+    const { resources } = state.loadingRSS;
 
-    validateForm(value, state)
+    validateForm(value, resources)
       .catch(({ errors }) => {
         const [error] = errors;
         throw new Error(error);
       })
       .catch((error) => {
         state.validation = 'invalid';
-        const resources = state.loadingRSS.resources.map((resourсe) => resourсe.url);
-        if (resources.includes(value)) {
+        const urlResources = resources.map((resourсe) => resourсe.url);
+        if (urlResources.includes(value)) {
           state.process = 'validation';
-          throw new Error(state.i18n.t('validation.errors.existFeed'));
+          throw new Error('validation.errors.existFeed');
         }
         throw new Error(error.message);
       })
@@ -31,7 +32,7 @@ const submitFormHandler = (state) => {
         handlerOfLoadingRSS(state, url);
       })
       .catch((error) => {
-        state.feedbackMessage = error.message;
+        state.feedbackMessageKey = error.message;
       });
   });
 };

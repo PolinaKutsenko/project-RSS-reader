@@ -16,7 +16,7 @@ const buildFeedItem = (feed) => {
   return liEl;
 };
 
-const buildPostItem = (post, state) => {
+const buildPostItem = (post, state, i18n) => {
   console.log('item');
   const liEl = document.createElement('li');
   liEl.classList.add('list-group-item', 'd-flex', 'justify-content-between');
@@ -41,13 +41,13 @@ const buildPostItem = (post, state) => {
   button.setAttribute('data-bs-target', '#modal');
   button.classList.add('btn', 'btn-outline-primary', 'btn-sm');
   button.setAttribute('data-id', post.id);
-  button.textContent = state.i18n.t('content.view');
+  button.textContent = i18n.t('content.view');
 
   liEl.append(linkEl, button);
   return liEl;
 };
 
-const buildCard = (state, typeOfCard) => {
+const buildCard = (state, typeOfCard, i18n) => {
   const divCardEl = document.createElement('div');
   divCardEl.classList.add('card', 'border-0');
 
@@ -56,18 +56,17 @@ const buildCard = (state, typeOfCard) => {
 
   const h2El = document.createElement('h2');
   h2El.classList.add('card-title', 'h4');
-  h2El.textContent = state.i18n.t(`content.${typeOfCard}`);
+  h2El.textContent = i18n.t(`content.${typeOfCard}`);
 
   divCardBodyEl.append(h2El);
   divCardEl.append(divCardBodyEl);
   return divCardEl;
 };
 
-const renderResponse = (state) => {
-  console.log('responseRender!!', state);
+const renderResponse = (state, i18n) => {
   const feedsContainer = document.querySelector('.feeds');
   feedsContainer.innerHTML = '';
-  const divFeedEl = buildCard(state, 'feed');
+  const divFeedEl = buildCard(state, 'feed', i18n);
 
   const ulFeedEl = document.createElement('ul');
   ulFeedEl.classList.add('list-group', 'border-0', 'rounded-0');
@@ -81,26 +80,16 @@ const renderResponse = (state) => {
 
   const postsContainer = document.querySelector('.posts');
   postsContainer.innerHTML = '';
-  const divPostEl = buildCard(state, 'post');
+  const divPostEl = buildCard(state, 'post', i18n);
 
   const ulPostEl = document.createElement('ul');
   ulPostEl.classList.add('list-group', 'border-0', 'rounded-0');
 
   state.loadingRSS.posts.forEach((post) => {
-    const liEl = buildPostItem(post, state);
+    const liEl = buildPostItem(post, state, i18n);
     ulPostEl.append(liEl);
     return ulPostEl;
   });
-
-  // state.loadingRSS.feeds.forEach((feed) => {
-  // const { id } = feed;
-  // const postsOfCurrentFeed = state.loadingRSS.posts.filter((post) => post.feedId === id);
-  // postsOfCurrentFeed.forEach((post) => {
-  // const liEl = buildPostItem(post, state);
-  // ulPostEl.append(liEl);
-  // return ulPostEl;
-  //  });
-  // });
   divPostEl.append(ulPostEl);
   postsContainer.append(divPostEl);
 };

@@ -5,29 +5,29 @@ import { openPostLinkHandler, viewModalOpenHandler } from './handlers/modalHandl
 import buildModal from './renders/modalRender.js';
 import timer from './handlers/updateHandler.js';
 
-const watchedState = (state) => {
-  const watcher = onChange(state, (path) => {
+const watcher = (state, i18n) => {
+  const watchedState = onChange(state, (path) => {
     if (path === 'validation') {
-      formRender(watcher);
+      formRender(watchedState);
     }
-    if (path === 'feedbackMessage') {
-      feedbackMessageRender(watcher);
+    if (path === 'feedbackMessageKey') {
+      feedbackMessageRender(watchedState, i18n);
     }
     if (path === 'loadingRSS.feeds') {
-      renderResponse(watcher);
-      openPostLinkHandler(watcher);
-      viewModalOpenHandler(watcher);
+      renderResponse(watchedState, i18n);
+      openPostLinkHandler(watchedState);
+      viewModalOpenHandler(watchedState);
     }
     if (path === 'loadingRSS.posts' || path === 'loadingRSS.uiState.viewedPostsId') {
-      renderResponse(watcher);
-      openPostLinkHandler(watcher);
-      viewModalOpenHandler(watcher);
+      renderResponse(watchedState, i18n);
+      openPostLinkHandler(watchedState);
+      viewModalOpenHandler(watchedState);
     }
     if (path === 'loadingRSS.uiState.currentModal') {
-      buildModal(watcher);
+      buildModal(watchedState);
     }
     if (path === 'loadingRSS.updatingPosts.currentTimerID') {
-      timer(watcher);
+      timer(watchedState, i18n);
     }
 
     //    switch (path) {
@@ -54,7 +54,7 @@ const watchedState = (state) => {
   //      throw new Error('error in watcher');
     //   }
   });
-  return watcher;
+  return watchedState;
 };
 
-export default watchedState;
+export default watcher;

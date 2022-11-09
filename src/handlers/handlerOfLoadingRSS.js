@@ -8,7 +8,7 @@ const handlerOfLoadingRSS = (state, url) => {
   axios.get(rssUrl.toString())
     .catch((e) => {
       state.loadingRSS.errors.push(e);
-      throw new Error(state.i18n.t('loading.errors.networkErrror'));
+      throw new Error('loading.errors.networkErrror');
     })
     .then((response) => {
       const parsedResponse = parseRSS(response.data.contents);
@@ -17,7 +17,7 @@ const handlerOfLoadingRSS = (state, url) => {
     })
     .catch((e) => {
       if (e.message === 'Parsing RSS Error') {
-        throw new Error(state.i18n.t('loading.errors.resourseError'));
+        throw new Error('loading.errors.resourseError');
       }
       throw new Error(e.message);
     })
@@ -32,7 +32,7 @@ const handlerOfLoadingRSS = (state, url) => {
       state.loadingRSS.posts = [...newPosts, ...state.loadingRSS.posts];
       state.loadingRSS.resources.push({ feedId, url });
       state.process = 'loaded';
-      state.feedbackMessage = state.i18n.t('loading.isLoaded');
+      state.feedbackMessageKey = 'loading.isLoaded';
       state.loadingRSS.updatingPosts.errorUpdating = null;
     })
     .then(() => {
@@ -40,7 +40,7 @@ const handlerOfLoadingRSS = (state, url) => {
       console.log('first timer go', state);
     })
     .catch((error) => {
-      state.feedbackMessage = error.message;
+      state.feedbackMessageKey = error.message;
     });
 };
 

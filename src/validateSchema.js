@@ -1,15 +1,15 @@
 import * as yup from 'yup';
 import { setLocale } from 'yup';
 
-const validateForm = (value, state) => {
+const validateForm = (value, resources) => {
   setLocale({
     string: {
-      url: state.i18n.t('validation.errors.notURL'),
-      min: state.i18n.t('validation.errors.minLength'),
+      url: 'validation.errors.notURL',
+      min: 'validation.errors.minLength',
     },
   });
-  const resources = state.loadingRSS.resources.map((resourse) => resourse.url);
-  const schema = yup.string().url().min(5).notOneOf(resources);
+  const sources = resources.map((resourse) => resourse.url);
+  const schema = yup.string().url().min(5).notOneOf(sources);
   return schema.validate(value);
 };
 export default validateForm;
