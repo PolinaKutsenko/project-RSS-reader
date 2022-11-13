@@ -38,7 +38,7 @@ const runApp = () => {
     .then(() => {
       const watchedState = watcher(state, i18n);
       submitFormHandler(watchedState);
-      timer(watchedState, i18n);
+      timer(watchedState);
     })
     .catch((e) => console.log(e, 'error in init i18next'));
 };

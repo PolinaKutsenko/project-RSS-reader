@@ -2,7 +2,7 @@ import axios from 'axios';
 import _ from 'lodash';
 import parseRSS from '../parserRSS.js';
 
-const updatingRSS = (state, i18n) => {
+const updatingRSS = (state) => {
   const { posts: oldPosts, feeds: oldFeeds } = state.loadingRSS;
   const promises = state.loadingRSS.resources.map((resource) => {
     const rssUrl = new URL(`https://allorigins.hexlet.app/get?disableCache=true&url=${resource.url}`);
@@ -54,13 +54,13 @@ const updatingRSS = (state, i18n) => {
   return promise;
 };
 
-const timer = (state, i18n) => {
+const timer = (state) => {
   if (!state.loadingRSS.updatingPosts.errorUpdating) {
     const timerId = setTimeout(() => {
-      updatingRSS(state, i18n)
+      updatingRSS(state)
         .then(() => {
           state.loadingRSS.updatingPosts.currentTimerID = timerId;
-          timer(state, i18n);
+          timer(state);
         })
         .catch((e) => {
           clearTimeout(state.loadingRSS.updatingPosts.currentTimerID);
