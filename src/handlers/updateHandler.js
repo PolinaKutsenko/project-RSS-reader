@@ -43,8 +43,8 @@ const updatingRSS = (state, i18n) => {
           return { feedId: currentfeedId, id: postId, ...post };
         });
         state.loadingRSS.posts = [...newPostsWithId, ...state.loadingRSS.posts];
-        state.process = 'loaded';
         state.loadingRSS.updatingPosts.errorUpdating = false;
+        state.process = 'loaded';
       });
     })
     .catch((e) => {
