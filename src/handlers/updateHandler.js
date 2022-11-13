@@ -8,49 +8,48 @@ const updatingRSS = (state, i18n) => {
     const rssUrl = new URL(`https://allorigins.hexlet.app/get?disableCache=true&url=${resource.url}`);
     return axios.get(rssUrl.toString())
       .catch(() => {
-        throw new Error(i18n.t('loading.errors.networkErrror'));
+        throw new Error('loading.errors.networkErrror');
       })
       .then((response) => {
         const parsedResponse = parseRSS(response.data.contents);
-        state.process = 'parsing';
         return parsedResponse;
       })
       .catch((e) => {
         if (e.message === 'Parsing RSS Error') {
-          throw new Error(i18n.t('loading.errors.resourseError'));
+          throw new Error('loading.errors.resourseError');
         }
         throw new Error(e.message);
       });
   });
 
   const promise = Promise.all(promises)
-    .catch((error) => {
-      console.log('Error in promise.all', error.message);
-      throw new Error(error.message);
-    })
     .then((parsedResponses) => {
+      state.process = 'updating';
       parsedResponses.forEach((parsedResponse) => {
         const { feed, posts } = parsedResponse;
-        const [currentFeed] = oldFeeds.filter((feedItem) => feedItem.title === feed.title);
-        const currentfeedId = currentFeed.id;
-        const existedPosts = oldPosts.filter((post) => post.feedId === currentfeedId);
-        const existedPostsTitle = existedPosts.map((post) => post.postTitle);
-        const newPosts = posts.filter((post) => !existedPostsTitle.includes(post.postTitle));
-        if (!_.isEmpty(newPosts)) {
-          const newPostsWithId = newPosts.map((post) => {
-            const postId = _.uniqueId();
-            return { ...post, id: postId, feedId: currentfeedId };
-          });
-          state.loadingRSS.posts = [...newPostsWithId, ...state.loadingRSS.posts];
-        }
+        const { id: currentfeedId } = oldFeeds.find((feedItem) => feedItem.title === feed.title);
+        const oldPostsOfCurrentFeedWithoutId = oldPosts.filter((post) => (
+          post.feedId === currentfeedId))
+          .map((post) => (
+            {
+              postTitle: post.postTitle,
+              postDescription: post.postDescription,
+              postLink: post.postLink,
+              postPubDate: post.postPubDate,
+            }));
+        const newPosts = _.differenceWith(posts, oldPostsOfCurrentFeedWithoutId, _.isEqual);
+        const newPostsWithId = newPosts.map((post) => {
+          const postId = _.uniqueId();
+          return { feedId: currentfeedId, id: postId, ...post };
+        });
+        state.loadingRSS.posts = [...newPostsWithId, ...state.loadingRSS.posts];
         state.process = 'loaded';
+        state.loadingRSS.updatingPosts.errorUpdating = false;
       });
-    })
-    .then(() => {
-      state.loadingRSS.updatingPosts.errorUpdating = false;
     })
     .catch((e) => {
       state.loadingRSS.updatingPosts.errorUpdating = e.message;
+      throw new Error(e.message);
     });
   return promise;
 };
@@ -61,12 +60,14 @@ const timer = (state, i18n) => {
       updatingRSS(state, i18n)
         .then(() => {
           state.loadingRSS.updatingPosts.currentTimerID = timerId;
+          timer(state, i18n);
+        })
+        .catch((e) => {
+          clearTimeout(state.loadingRSS.updatingPosts.currentTimerID);
+          state.process = 'error';
+          state.feedbackMessageKey = e.message;
         });
     }, 5000);
-  }
-  if (state.loadingRSS.updatingPosts.errorUpdating) {
-    console.log('cleartimeout!!!');
-    clearTimeout(state.loadingRSS.updatingPosts.currentTimerID);
   }
 };
 

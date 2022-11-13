@@ -1,27 +1,12 @@
 import axios from 'axios';
 import _ from 'lodash';
 import parseRSS from '../parserRSS.js';
-import timer from './updateHandler.js';
 
 const handlerOfLoadingRSS = (state, url) => {
   const rssUrl = new URL(`https://allorigins.hexlet.app/get?disableCache=true&url=${url}`);
   axios.get(rssUrl.toString())
-    .catch((e) => {
-      state.loadingRSS.errors.push(e);
-      throw new Error('loading.errors.networkErrror');
-    })
     .then((response) => {
       const parsedResponse = parseRSS(response.data.contents);
-      state.process = 'parsing';
-      return parsedResponse;
-    })
-    .catch((e) => {
-      if (e.message === 'Parsing RSS Error') {
-        throw new Error('loading.errors.resourseError');
-      }
-      throw new Error(e.message);
-    })
-    .then((parsedResponse) => {
       const { feed, posts } = parsedResponse;
       const feedId = _.uniqueId();
       state.loadingRSS.feeds = [{ ...feed, id: feedId }, ...state.loadingRSS.feeds];
@@ -35,12 +20,19 @@ const handlerOfLoadingRSS = (state, url) => {
       state.feedbackMessageKey = 'loading.isLoaded';
       state.loadingRSS.updatingPosts.errorUpdating = null;
     })
-    .then(() => {
-      timer(state);
-      console.log('first timer go', state);
-    })
-    .catch((error) => {
-      state.feedbackMessageKey = error.message;
+    .catch((e) => {
+      state.process = 'error';
+      switch (e.message) {
+        case 'Parsing RSS Error':
+          state.feedbackMessageKey = 'loading.errors.resourseError';
+          break;
+        case 'Network Error':
+          state.loadingRSS.errors.push(e);
+          state.feedbackMessageKey = 'loading.errors.networkErrror';
+          break;
+        default:
+          throw new Error(e.message);
+      }
     });
 };
 

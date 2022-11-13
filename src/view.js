@@ -3,7 +3,6 @@ import { formRender, feedbackMessageRender } from './renders/formRender.js';
 import renderResponse from './renders/responseRender.js';
 import { openPostLinkHandler, viewModalOpenHandler } from './handlers/modalHandler.js';
 import buildModal from './renders/modalRender.js';
-import timer from './handlers/updateHandler.js';
 
 const watcher = (state, i18n) => {
   const watchedState = onChange(state, (path) => {
@@ -25,9 +24,6 @@ const watcher = (state, i18n) => {
     }
     if (path === 'loadingRSS.uiState.currentModal') {
       buildModal(watchedState);
-    }
-    if (path === 'loadingRSS.updatingPosts.currentTimerID') {
-      timer(watchedState, i18n);
     }
 
     //    switch (path) {

@@ -23,7 +23,9 @@ const feedbackMessageRender = (state, i18n) => {
     feedback.classList.add('text-success');
     return;
   }
-  feedback.classList.add('text-danger');
+  if (state.process === 'error') {
+    feedback.classList.add('text-danger');
+  }
 };
 
 export { formRender, feedbackMessageRender };

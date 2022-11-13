@@ -4,6 +4,7 @@ import './style.scss';
 import resources from './locales/ruAndEnLocales.js';
 import watcher from './view.js';
 import submitFormHandler from './handlers/submitFormHandler.js';
+import timer from './handlers/updateHandler.js';
 
 const runApp = () => {
   const state = {
@@ -37,6 +38,7 @@ const runApp = () => {
     .then(() => {
       const watchedState = watcher(state, i18n);
       submitFormHandler(watchedState);
+      timer(watchedState, i18n);
     })
     .catch((e) => console.log(e, 'error in init i18next'));
 };

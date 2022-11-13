@@ -10,29 +10,26 @@ const submitFormHandler = (state) => {
     const { resources } = state.loadingRSS;
 
     validateForm(value, resources)
-      .catch(({ errors }) => {
-        const [error] = errors;
-        throw new Error(error);
-      })
-      .catch((error) => {
-        state.validation = 'invalid';
-        const urlResources = resources.map((resourсe) => resourсe.url);
-        if (urlResources.includes(value)) {
-          state.process = 'validation';
-          throw new Error('validation.errors.existFeed');
-        }
-        throw new Error(error.message);
-      })
       .then((url) => {
         state.validation = 'valid';
-        state.process = 'validation';
-        return url;
-      })
-      .then((url) => {
         handlerOfLoadingRSS(state, url);
       })
-      .catch((error) => {
-        state.feedbackMessageKey = error.message;
+      .catch((err) => {
+        state.process = 'error';
+        state.validation = 'invalid';
+        const { type } = err;
+        const [errorMessage] = err.errors;
+        switch (type) {
+          case 'url':
+          case 'min':
+            state.feedbackMessageKey = errorMessage;
+            break;
+          case 'notOneOf':
+            state.feedbackMessageKey = 'validation.errors.existFeed';
+            break;
+          default:
+            throw new Error(e.message);
+        }
       });
   });
 };
