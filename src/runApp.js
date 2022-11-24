@@ -5,17 +5,20 @@ import resources from './locales/ruAndEnLocales.js';
 import watcher from './view.js';
 import submitFormHandler from './handlers/submitFormHandler.js';
 import timer from './handlers/updateHandler.js';
+import { switchLanguageHandler } from './handlers/modalHandler.js';
 
 const runApp = () => {
   const state = {
-    process: null,
-    feedbackMessageKey: null,
-    validation: null,
+    process: 'init',
+    language: 'ru',
+    validation: {
+      status: 'Valid',
+      error: null,
+    },
     loadingRSS: {
-      errors: [],
+      error: null,
       feeds: [],
       posts: [],
-      resources: [],
       uiState: {
         viewedPostsId: [],
         currentModal: null,
@@ -38,6 +41,7 @@ const runApp = () => {
     .then(() => {
       const watchedState = watcher(state, i18n);
       submitFormHandler(watchedState);
+      switchLanguageHandler(watchedState);
       timer(watchedState);
     })
     .catch((e) => console.log(e, 'error in init i18next'));

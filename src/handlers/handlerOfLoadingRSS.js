@@ -9,30 +9,17 @@ const handlerOfLoadingRSS = (state, url) => {
       const parsedResponse = parseRSS(response.data.contents);
       const { feed, posts } = parsedResponse;
       const feedId = _.uniqueId();
-      state.loadingRSS.feeds = [{ ...feed, id: feedId }, ...state.loadingRSS.feeds];
+      state.loadingRSS.feeds = [{ ...feed, id: feedId, url }, ...state.loadingRSS.feeds];
       const newPosts = posts.map((post) => {
         const postId = _.uniqueId();
         return { ...post, id: postId, feedId };
       });
       state.loadingRSS.posts = [...newPosts, ...state.loadingRSS.posts];
-      state.loadingRSS.resources.push({ feedId, url });
       state.process = 'loaded';
-      state.feedbackMessageKey = 'loading.isLoaded';
-      state.loadingRSS.updatingPosts.errorUpdating = null;
     })
     .catch((e) => {
+      state.loadingRSS.error = e.message;
       state.process = 'error';
-      switch (e.message) {
-        case 'Parsing RSS Error':
-          state.feedbackMessageKey = 'loading.errors.resourseError';
-          break;
-        case 'Network Error':
-          state.loadingRSS.errors.push(e);
-          state.feedbackMessageKey = 'loading.errors.networkErrror';
-          break;
-        default:
-          throw new Error(e.message);
-      }
     });
 };
 

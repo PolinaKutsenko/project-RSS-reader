@@ -4,27 +4,20 @@ import parseRSS from '../parserRSS.js';
 
 const updatingRSS = (state) => {
   const { posts: oldPosts, feeds: oldFeeds } = state.loadingRSS;
-  const promises = state.loadingRSS.resources.map((resource) => {
+  const promises = state.loadingRSS.feeds.map((resource) => {
     const rssUrl = new URL(`https://allorigins.hexlet.app/get?disableCache=true&url=${resource.url}`);
     return axios.get(rssUrl.toString())
-      .catch(() => {
-        throw new Error('loading.errors.networkErrror');
-      })
       .then((response) => {
         const parsedResponse = parseRSS(response.data.contents);
         return parsedResponse;
       })
       .catch((e) => {
-        if (e.message === 'Parsing RSS Error') {
-          throw new Error('loading.errors.resourseError');
-        }
         throw new Error(e.message);
       });
   });
 
   const promise = Promise.all(promises)
     .then((parsedResponses) => {
-      state.process = 'updating';
       parsedResponses.forEach((parsedResponse) => {
         const { feed, posts } = parsedResponse;
         const { id: currentfeedId } = oldFeeds.find((feedItem) => feedItem.title === feed.title);
@@ -43,32 +36,24 @@ const updatingRSS = (state) => {
           return { feedId: currentfeedId, id: postId, ...post };
         });
         state.loadingRSS.posts = [...newPostsWithId, ...state.loadingRSS.posts];
-        state.loadingRSS.updatingPosts.errorUpdating = false;
-        state.process = 'loaded';
+        state.loadingRSS.updatingPosts.errorUpdating = null;
       });
     })
     .catch((e) => {
       state.loadingRSS.updatingPosts.errorUpdating = e.message;
-      throw new Error(e.message);
     });
   return promise;
 };
 
 const timer = (state) => {
-  if (!state.loadingRSS.updatingPosts.errorUpdating) {
-    const timerId = setTimeout(() => {
-      updatingRSS(state)
-        .then(() => {
-          state.loadingRSS.updatingPosts.currentTimerID = timerId;
-          timer(state);
-        })
-        .catch((e) => {
-          clearTimeout(state.loadingRSS.updatingPosts.currentTimerID);
-          state.process = 'error';
-          state.feedbackMessageKey = e.message;
-        });
-    }, 5000);
-  }
+  // console.log('timer', state);
+  const timerId = setTimeout(() => {
+    updatingRSS(state)
+      .then(() => {
+        state.loadingRSS.updatingPosts.currentTimerID = timerId;
+        timer(state);
+      });
+  }, 5000);
 };
 
 export default timer;
