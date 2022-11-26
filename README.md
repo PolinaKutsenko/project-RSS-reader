@@ -3,16 +3,28 @@
 # RSS-reader:
 RSS is a specialized format for describing news feeds, article announcements, and other materials. Rss Reader is a service for aggregating RSS feeds that make it convenient to read various sources, such as blogs. It allows you to add an unlimited number of RSS feeds, updates them itself and adds new entries to the general feed.<br>
 
-This project has been created using **webpack-cli**, you can now run
+## Demo (deployed with Vercel): https://project-rss-reader-by-polina.vercel.app/
+
+## Installation
 
 ```
-npm run build
+$ make install
 ```
 
-or
+## Run developer server
 
 ```
-yarn build
+$ make develop
 ```
 
-to bundle your application
+## Run linter
+
+```
+$ make lint
+```
+
+## Build project
+
+```
+$ make build
+```
